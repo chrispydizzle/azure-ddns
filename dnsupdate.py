@@ -1,9 +1,18 @@
 import os
+import sys
+import argparse
 import requests
 from dotenv import load_dotenv
 from azure.identity import ClientSecretCredential
 from azure.mgmt.dns import DnsManagementClient
 from azure.core.exceptions import ResourceNotFoundError
+
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description="Update Azure DNS records with current public IP")
+parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
+args = parser.parse_args()
+
+verbose = args.verbose
 
 # Load environment variables from .env file
 load_dotenv()
@@ -36,7 +45,8 @@ for subdomain in SUBDOMAINS:
     try:
         record_set = dns_client.record_sets.get(RESOURCE_GROUP, DNS_ZONE, subdomain, "A")
         if record_set.a_records and record_set.a_records[0].ipv4_address == public_ip:
-            print(f"No update needed for {subdomain}.{DNS_ZONE}")
+            if verbose:
+                print(f"No update needed for {subdomain}.{DNS_ZONE}")
         else:
             print(f"Updating DNS: {subdomain}.{DNS_ZONE} -> {public_ip}")
             dns_client.record_sets.create_or_update(
