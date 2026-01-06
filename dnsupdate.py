@@ -10,7 +10,7 @@ from azure.core.exceptions import ResourceNotFoundError
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description="Update Azure DNS records with current public IP")
 parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
-args = parser.parse_args()
+args, _ = parser.parse_known_args()
 
 verbose = args.verbose
 

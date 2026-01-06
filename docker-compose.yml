@@ -1,0 +1,6 @@
+services:
+  azure-ddns:
+    build: .
+    container_name: azure-ddns
+    restart: unless-stopped
+    command: "/app/start.sh"

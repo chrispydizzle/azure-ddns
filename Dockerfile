@@ -17,7 +17,7 @@ COPY dnsupdate.py .
 # Create a script to run the update and handle environment variables
 RUN echo '#!/bin/bash' > /app/run_update.sh && \
     echo 'cd /app' >> /app/run_update.sh && \
-    echo '/usr/local/bin/python dnsupdate.py' >> /app/run_update.sh && \
+    echo '/usr/local/bin/python dnsupdate.py "$1"' >> /app/run_update.sh && \
     chmod +x /app/run_update.sh
 
 # Create crontab file - runs every 6 hours
@@ -32,7 +32,7 @@ RUN touch /var/log/ddns-update.log
 # Create startup script that runs once then starts cron
 RUN echo '#!/bin/bash' > /app/start.sh && \
     echo 'echo "Running initial DNS update..."' >> /app/start.sh && \
-    echo '/app/run_update.sh' >> /app/start.sh && \
+    echo '/app/run_update.sh -v' >> /app/start.sh && \
     echo 'echo "Starting cron daemon..."' >> /app/start.sh && \
     echo 'cron -f &' >> /app/start.sh && \
     echo 'tail -f /var/log/ddns-update.log' >> /app/start.sh && \
