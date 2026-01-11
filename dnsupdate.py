@@ -28,9 +28,12 @@ SUBDOMAINS = os.getenv("SUBDOMAINS", "").split(",")
 
 TTL = 300  # 5 minutes
 
-# Get current public IP
-response = requests.get("https://api64.ipify.org?format=json")
-public_ip = response.json()["ip"]
+try:
+    response = requests.get("https://api64.ipify.org?format=json", timeout=10)
+    public_ip = response.json()["ip"]
+except requests.exceptions.RequestException as e:
+    print(f"Failed to get public IP: {e}")
+    sys.exit(1)
 
 # Authenticate with Azure
 credentials = ClientSecretCredential(TENANT_ID, CLIENT_ID, CLIENT_SECRET)

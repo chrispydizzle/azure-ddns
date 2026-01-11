@@ -22,7 +22,7 @@ RUN echo '#!/bin/bash' > /app/run_update.sh && \
 
 # Create crontab file - runs every 6 hours
 #RUN echo ' */6 * * * /app/run_update.sh >> /var/log/ddns-update.log 2>&1' > /etc/cron.d/ddns-cron && \
-RUN echo '*/1 * * * * /app/run_update.sh >> /var/log/ddns-update.log 2>&1' > /etc/cron.d/ddns-cron && \
+RUN echo '*/40 * * * * /app/run_update.sh >> /var/log/ddns-update.log 2>&1' > /etc/cron.d/ddns-cron && \
 chmod 0644 /etc/cron.d/ddns-cron && \
     crontab /etc/cron.d/ddns-cron
 
