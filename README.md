@@ -14,9 +14,12 @@ SUBSCRIPTION_ID=<your-subscription-id>
 RESOURCE_GROUP=<your-resource-group>
 DNS_ZONE=<your-dns-zone>
 SUBDOMAINS=vpn,www,etc
+ROUTER_URL=http://192.168.1.13/
 ```
 
 The `SUBDOMAINS` variable should contain a comma-separated list of all the subdomains you want to update with your public IP address. You can add as many subdomains as needed.
+
+The `ROUTER_URL` variable (optional) points at a router whose info page reports the current WAN IP. The script reads the WAN IP directly from the router instead of an external service, falling back to ipify if the router is unreachable. It defaults to `http://192.168.1.13/` and currently expects a DD-WRT-style info page that exposes the address in a `wan_ipaddr` element.
 
 > **Note:** Never commit this file to your repository.
 
@@ -66,7 +69,7 @@ Then run the script:
 python dnsupdate.py
 ```
 
-The script will load all configuration and credentials from the `.env` file and update your DNS records with your current public IP address.
+The script will load all configuration and credentials from the `.env` file and update your DNS records with your current WAN IP address (read from your router, or from ipify if the router is unreachable).
 
 ## Running with Docker
 
@@ -107,6 +110,7 @@ docker run -d \
   -e CLIENT_ID=<client-id> \
   -e CLIENT_SECRET=<client-secret> \
   -e SUBDOMAINS=vpn,www,etc \
+  -e ROUTER_URL=http://192.168.1.13/ \
   --restart unless-stopped \
   azure-ddns
 ```
@@ -139,10 +143,16 @@ To run the Docker image directly with your `.env` file mounted:
 
 ```powershell
 docker build -t azure-ddns .
-docker run -d `
-  -v "${PWD}/.env:/app/.env:ro" `
-  --restart unless-stopped `
-  azure-ddns
+docker run -d --name azure-ddns -v "${PWD}/.env:/app/.env:ro" --restart unless-stopped azure-ddns
+```
+
+Rebuild: 
+
+```powershell
+docker stop azure-ddns
+docker rm azure-ddns
+docker build -t azure-ddns .
+docker run -d --name azure-ddns -v "${PWD}/.env:/app/.env:ro" --restart unless-stopped azure-ddns
 ```
 
 On Linux/Mac:
