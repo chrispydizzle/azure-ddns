@@ -160,6 +160,7 @@ On Linux/Mac:
 ```bash
 docker build -t azure-ddns .
 docker run -d \
+  --name azure-ddns \
   -v "$(pwd)/.env:/app/.env:ro" \
   --restart unless-stopped \
   azure-ddns
