@@ -1,4 +1,4 @@
-python-dotenv==1.0.0
+python-dotenv==1.2.2
 azure-identity==1.16.1
 azure-mgmt-dns==8.0.0
 requests==2.32.4
